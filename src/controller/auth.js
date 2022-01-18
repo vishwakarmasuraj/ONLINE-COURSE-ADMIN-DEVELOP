@@ -4,7 +4,6 @@ import {constants} from '../constant'
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-
 export const userSignup = async (req, res) => {
     try {
         req.body.password = await bcrypt.hash(req.body.password, constants.ROUND);
