@@ -9,5 +9,6 @@ module.exports = Object.freeze({
     LOGIN_SUCCESS: 'Successfully login!',
     EMAIL_SUB_PASS: 'For changing password',
     TEXT: 'Visit this link!',
+    FORGOT_PASS_EMAIL_NOT_FOUND: 'Email does not exist',
     FORGOT_PASS_SUCC: 'Reset password link has been sent to your register email id!'
 })

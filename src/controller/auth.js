@@ -3,7 +3,8 @@ import { successHandler, errorHandler } from "../helper/responseHandler";
 import {constants} from '../constant'
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import {v4 as uuidv4} from 'uuid';
+import fs from 'fs';
+import Handlebars from "handlebars";
 
 export const userSignup = async (req, res) => {
     try {
@@ -25,7 +26,6 @@ const generateToken = (user) => {
 
 export const userLogin = async (req, res) => {
     try {
-        console.log('hello')
         const data = await userModel.findOne({email: req.body.email});
         if (!data){
             return errorHandler(res, 404, constants.LOGIN_EMAIL_ERR);
@@ -43,3 +43,19 @@ export const userLogin = async (req, res) => {
         return errorHandler(res, 500, constants.ERR_MSG);
     };
 };
+
+export const forgotPassword = async (req, res) => {
+    try {
+        const getEmail = await userLogin.findOne({email: req.body.email});
+        if (!getEmail){
+            return errorHandler(res, 404, constants.FORGOT_PASS_EMAIL_NOT_FOUND);
+        }
+        const resetPasswordToken = jwt.sign({email: getEmail.email}, process.env.SECRET_KEY, {
+            expiresIn: process.env.EXPIRE_IN
+        })
+        await userModel.updateOne({email: req.body.email}, {$set: {resetPasswordToken}})
+        let htmlRequest = await fs.readFileSync(`${__dir}`)
+    } catch (error) {
+        
+    }
+}
