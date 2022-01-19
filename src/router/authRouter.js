@@ -12,10 +12,10 @@ router.post('/signup', userValidRule.userValidRule(), valid.validate, authContro
 /**
  * 
  */
-router.post('/login', authController.userLogin)
+router.post('/login', authController.userLogin);
 /**
  * 
  */
-router
+router.post('/forgot-password', authController.forgotPassword);
 
 module.exports = router 
