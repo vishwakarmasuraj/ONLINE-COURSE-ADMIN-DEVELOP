@@ -3,6 +3,7 @@ import { successHandler, errorHandler } from "../helper/responseHandler";
 import {constants} from '../constant'
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import {v4 as uuidv4} from 'uuid';
 
 export const userSignup = async (req, res) => {
     try {
@@ -24,6 +25,7 @@ const generateToken = (user) => {
 
 export const userLogin = async (req, res) => {
     try {
+        console.log('hello')
         const data = await userModel.findOne({email: req.body.email});
         if (!data){
             return errorHandler(res, 404, constants.LOGIN_EMAIL_ERR);
