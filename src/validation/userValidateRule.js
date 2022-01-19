@@ -16,7 +16,7 @@ export const userValidRule = () => {
             return userModel.findOne({email: value}).then(data => {
                 if (data) {
                     return Promise.reject({message: 'Email is already exist'});
-                }
+                };
             });
         }),
         body('password').notEmpty()

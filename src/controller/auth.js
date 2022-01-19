@@ -46,16 +46,18 @@ export const userLogin = async (req, res) => {
 
 export const forgotPassword = async (req, res) => {
     try {
-        const getEmail = await userLogin.findOne({email: req.body.email});
+        const getEmail = await userModel.findOne({email: req.body.email});
         if (!getEmail){
             return errorHandler(res, 404, constants.FORGOT_PASS_EMAIL_NOT_FOUND);
         }
         const resetPasswordToken = jwt.sign({email: getEmail.email}, process.env.SECRET_KEY, {
             expiresIn: process.env.EXPIRE_IN
         })
-        await userModel.updateOne({email: req.body.email}, {$set: {resetPasswordToken}})
-        let htmlRequest = await fs.readFileSync(`${__dir}`)
+        await userModel.updateOne({email: req.body.email}, {$set: {resetPasswordToken}});
+        let htmlRequest = await fs.readFileSync(`${__dirname}/../../emailTemplate/forgotPassword.html`);
+        let template = fs.Handlebars(htmlRequest);
+        return successHandler(res, 200, template)
     } catch (error) {
-        
-    }
-}
+        return errorHandler(res, 500, constants.ERR_MSG);
+    };
+};
