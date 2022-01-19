@@ -4,6 +4,7 @@ import {constants} from '../constant'
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
+import { sendMail } from "../helper/email";
 import Handlebars from "handlebars";
 
 export const userSignup = async (req, res) => {
@@ -54,9 +55,20 @@ export const forgotPassword = async (req, res) => {
             expiresIn: process.env.EXPIRE_IN
         })
         await userModel.updateOne({email: req.body.email}, {$set: {resetPasswordToken}});
-        let htmlRequest = await fs.readFileSync(`${__dirname}/../../emailTemplate/forgotPassword.html`);
-        let template = fs.Handlebars(htmlRequest);
-        return successHandler(res, 200, template)
+        let htmlRequest = await fs.readFileSync(`${__dirname}/../../emailTemplate/forgotPassword.html`, 'utf8');
+        let template = Handlebars.compile(htmlRequest);
+        const replacements = {
+            token: `http://localhost:3000/auth/reset-password/${resetPasswordToken}`
+        };
+        const htmlToSend = template(replacements);
+        const options = {
+            from: process.env.FROM_EMAIL,
+            to: req.body.email,
+            subject: constants.EMAIL_SUB_PASS,
+            html: `${htmlToSend}`
+        };
+        await sendMail(options);
+        return successHandler(res, 200, constants.FORGOT_PASSWORD_SUCCESS_MSG);
     } catch (error) {
         return errorHandler(res, 500, constants.ERR_MSG);
     };
